@@ -83,7 +83,8 @@ class AuthController extends Controller
     private function authenticatedResponse(User $user, int $status = 200)
     {
         $token = $user->createToken('rawijli-web', ['*'], now()->addDays(7))->plainTextToken;
-        $cookie = cookie('rawijli_token', $token, 60 * 24 * 7, '/', null, app()->environment('production'), true, false, 'lax');
+        $sameSite = strtolower((string) env('AUTH_COOKIE_SAME_SITE', 'lax'));
+        $cookie = cookie('rawijli_token', $token, 60 * 24 * 7, '/', null, app()->environment('production'), true, false, $sameSite);
         return (new UserResource($user->load(['workspace', 'freelancerProfile'])))
             ->response()->setStatusCode($status)->withCookie($cookie);
     }

@@ -17,6 +17,10 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
         $middleware->prepend(\App\Http\Middleware\AuthenticateCookie::class);
         $middleware->throttleApi();
+
+        // Trust the reverse proxy (Nginx / Cloudflare) so HTTPS and client IP
+        // detection work correctly in production.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
